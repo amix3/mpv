@@ -1,2 +1,2 @@
 # mpv-config
-mpv config files
+personal mpv config files
