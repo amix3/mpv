@@ -95,15 +95,15 @@ local osc_param = { -- calculated by osc_init()
 }
 
 local osc_styles = {
-    box = "{\\blur0\\bord1\\1c&H222222\\3c&H242424}",
-    seekbar_bg = "{\\blur0\\bord0\\1c&HFFFFFF}",
-    seekbar_fg = "{\\blur0\\bord0\\1c&H82B489}",
-    volumebar_bg = "{\\blur0\\bord0\\1c&HFFFFFF}",
-    volumebar_fg = "{\\blur0\\bord0\\1c&HFFFFFF}",
-    button = "{\\blur0\\bord0\\1c&HFFFFFF\\3c&HFFFFFF}",
-    timecode = "{\\blur0\\bord0\\1c&HFFFFFF\\3c&H000000\\fs18}",
-    tooltip = "{\\blur1.5\\bord0.01\\1c&HFFFFFF\\3c&H000000\\fs18}",
-    title = "{\\1c&HFFFFFF\\fs24}",
+    box = "{\\blur0\\bord1\\1c&H251818\\3c&H251818}",
+    seekbar_bg = "{\\blur0\\bord0\\1c&HF4D6CD}",
+    seekbar_fg = "{\\blur0\\bord0\\1c&HA1E3A6}",
+    volumebar_bg = "{\\blur0\\bord0\\1c&HF4D6CD}",
+    volumebar_fg = "{\\blur0\\bord0\\1c&HF4D6CD}",
+    button = "{\\blur0\\bord0\\1c&HF4D6CD\\3c&HF4D6CD}",
+    timecode = "{\\blur0\\bord0\\1c&HF4D6CD\\3c&H000000\\fs18}",
+    tooltip = "{\\blur1.5\\bord0.01\\1c&HF4D6CD\\3c&H000000\\fs18}",
+    title = "{\\1c&HF4D6CD\\fs24}",
 }
 
 -- internal states, do not touch
