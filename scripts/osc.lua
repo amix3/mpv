@@ -95,9 +95,9 @@ local osc_param = { -- calculated by osc_init()
 }
 
 local osc_styles = {
-    box = "{\\blur0\\bord1\\1c&H222222\\3c&H242424}",
+    box = "{\\blur0\\bord1\\1c&H222222\\3c&H222222}",
     seekbar_bg = "{\\blur0\\bord0\\1c&HFFFFFF}",
-    seekbar_fg = "{\\blur0\\bord0\\1c&HE9AE3D}",
+    seekbar_fg = "{\\blur0\\bord0\\1c&HEBEB94}",
     volumebar_bg = "{\\blur0\\bord0\\1c&HFFFFFF}",
     volumebar_fg = "{\\blur0\\bord0\\1c&HFFFFFF}",
     button = "{\\blur0\\bord0\\1c&HFFFFFF\\3c&HFFFFFF}",
