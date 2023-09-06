@@ -309,11 +309,11 @@ settings['pause-indicator'] = true
 helpText['pause-indicator'] = [[Sets whether or not the pause indicator is displayed. The pause indicator is a
 momentary icon that flashes in the middle of the screen, similar to youtube.
 ]]
-settings['pause-indicator-foreground-style'] = [[\c&HF4D6CD&]]
+settings['pause-indicator-foreground-style'] = [[\c&FBFCFC&]]
 helpText['pause-indicator-foreground-style'] = [[A string of ASS override tags that get applied only to the foreground of the
 pause indicator.
 ]]
-settings['pause-indicator-background-style'] = [[\c&H251818&]]
+settings['pause-indicator-background-style'] = [[\c&H2D2D2D&]]
 helpText['pause-indicator-background-style'] = [[A string of ASS override tags that get applied only to the background of the
 pause indicator.
 ]]

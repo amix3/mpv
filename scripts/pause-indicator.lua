@@ -86,7 +86,7 @@ local settingsMeta = {
       local dirExists = mp.find_config_file(configDir)
       if dirExists and not utils.readdir(configDir) then
         log.warn(('Configuration migration failed. %q exists and does not appear to be a folder'):format(configDir))
-        return
+        return 
       else
         if not dirExists then
           local res = utils.subprocess({
@@ -97,7 +97,7 @@ local settingsMeta = {
           })
           if res.error or res.status ~= 0 then
             log.warn(('Making directory %q failed.'):format(configDir))
-            return
+            return 
           end
         end
       end
@@ -110,7 +110,7 @@ local settingsMeta = {
       })
       if res.error or res.status ~= 0 then
         log.warn(('Moving file %q -> %q failed.'):format(oldConfig, newConfig))
-        return
+        return 
       end
       if mp.find_config_file(newConfigFile) then
         return log.info('Configuration successfully migrated.')
@@ -145,6 +145,7 @@ helpText['default-style'] = [[Default style that is applied to all UI elements. 
 Individual elements have their own style settings which override the tags here.
 Changing the font will likely require changing the hover-time margin settings
 and the offscreen-pos settings.
+
 Here are some useful ASS override tags (omit square brackets):
 \fn[Font Name]: sets the font to the named font.
 \fs[number]: sets the font size to the given number.
@@ -196,6 +197,7 @@ settings['seek-precision'] = 'exact'
 helpText['seek-precision'] = [[Affects precision of seeks due to clicks on the progress bar. Should be 'exact' or
 'keyframes'. Exact is slightly slower, but won't jump around between two
 different times when clicking in the same place.
+
 Actually, this gets passed directly into the `seek` command, so the value can be
 any of the arguments supported by mpv, though the ones above are the only ones
 that really make sense.
@@ -309,11 +311,11 @@ settings['pause-indicator'] = true
 helpText['pause-indicator'] = [[Sets whether or not the pause indicator is displayed. The pause indicator is a
 momentary icon that flashes in the middle of the screen, similar to youtube.
 ]]
-settings['pause-indicator-foreground-style'] = [[\c&FBFCFC&]]
+settings['pause-indicator-foreground-style'] = [[\c&HE3E3E3&]]
 helpText['pause-indicator-foreground-style'] = [[A string of ASS override tags that get applied only to the foreground of the
 pause indicator.
 ]]
-settings['pause-indicator-background-style'] = [[\c&H2D2D2D&]]
+settings['pause-indicator-background-style'] = [[\c&H101010&]]
 helpText['pause-indicator-background-style'] = [[A string of ASS override tags that get applied only to the background of the
 pause indicator.
 ]]
@@ -354,7 +356,7 @@ significantly affect the smoothness of animations, and it is subject to the
 accuracy limits imposed by the scheduler mpv uses. Probably not worth changing
 unless you have major performance problems.
 ]]
-settings['animation-duration'] = 0.25
+settings['animation-duration'] = 0.300
 helpText['animation-duration'] = [[Controls how long the UI animations take. A value of 0 disables all animations
 (which breaks the pause indicator).
 ]]
@@ -428,7 +430,7 @@ do
     end,
     removeSortedList = function(self, elementList)
       if #elementList < 1 then
-        return
+        return 
       end
       for i = 1, #elementList - 1 do
         local element = table.remove(elementList)
@@ -621,7 +623,7 @@ do
   end
   self.animate = function()
     if #animationList == 0 then
-      return
+      return 
     end
     local currentTime = mp.get_time()
     for _, animation in ipairs(animationList) do
@@ -654,13 +656,13 @@ do
     end,
     addZone = function(self, zone)
       if zone == nil then
-        return
+        return 
       end
       return self.activityZones:insert(zone)
     end,
     removeZone = function(self, zone)
       if zone == nil then
-        return
+        return 
       end
       return self.activityZones:remove(zone)
     end,
@@ -739,7 +741,7 @@ do
       local displayDuration = settings['request-display-duration']
       mp.add_key_binding("tab", "request-display", function(event)
         if event.event == "repeat" then
-          return
+          return 
         end
         if event.event == "down" or event.event == "press" then
           if displayRequestTimer then
