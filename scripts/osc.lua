@@ -30,7 +30,7 @@ local user_opts = {
                                 -- internal track list management (and some
                                 -- functions that depend on it)
     seekbarfgcolor = 'FFFFFF',  -- seekbar foreground color, including seekbar handle and seek range
-    seekrange = false,           -- show seekrange overlay
+    seekrange = false,          -- show seekrange overlay
     seekrangealpha = 160,       -- transparency of seekranges
     seekbarkeyframes = true,    -- use keyframes when dragging the seekbar
     title = "${media-title}",   -- string compatible with property-expansion
@@ -48,7 +48,6 @@ local user_opts = {
     unicodeminus = false,       -- whether to use the Unicode minus sign character
     language = "eng",           -- eng=English, per=Persian
     movesub = 'yes',            -- whether move up subtitle when osc appears
-    blended_subtitles = 'yes',     -- if you have blend-subtitles in yout mpv.conf set to no change this.
                                 -- use with caution. it breaks setting sub pos runtime with r/t key
     subpos = 100,               -- with movesub enabled, initial subtitle position
                                 -- it overrides --sub-pos property in mpv.conf
@@ -1413,8 +1412,9 @@ function checkAspectRatio()
     local width = videoParams["w"]
     local height = videoParams["h"]
     local aspectRatio = width / height
+    local blendSubtitles = mp.get_property("blend-subtitles")
     -- mp.msg.warn("aspect", aspectRatio)
-    if user_opts.movesub == 'yes' and user_opts.blended_subtitles == 'yes' then
+    if user_opts.movesub == 'yes' and blendSubtitles == 'yes' then
       if aspectRatio >= 1.85 then
         user_opts.movesub = 'no'
       end
