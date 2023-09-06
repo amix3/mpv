@@ -1394,6 +1394,35 @@ local UNICODE_MINUS = string.char(0xe2, 0x88, 0x92)  -- UTF-8 for U+2212 MINUS S
 -- OSC INIT
 function osc_init()
     msg.debug("osc_init")
+
+-- you shaud have blend subtitles enabled
+function checkAspectRatio()
+    local videoParams = mp.get_property_native("video-params")
+    -- in case of e.g. lavfi-complex there can be no input video, only output
+    if not videoParams then
+        videoParams = mp.get_property_native("video-out-params")
+    end
+    if not videoParams then
+        return
+    end
+    local width = videoParams["w"]
+    local height = videoParams["h"]
+    local aspectRatio = width / height
+    -- mp.msg.warn("aspect", aspectRatio)
+    if user_opts.movesub == 'yes' then
+      if aspectRatio >= 1.85 then
+        user_opts.movesub = 'no'
+      end
+    end
+end
+
+function onFileLoaded()
+    checkAspectRatio()
+end
+
+mp.register_event("file-loaded", onFileLoaded)
+
+mp.register_event("video-reconfig", on_video_reconfig)
     if user_opts.movesub == 'yes' then
         if state.osc_visible then
             mp.set_property_number('options/sub-pos', user_opts.subpos_withosc)
