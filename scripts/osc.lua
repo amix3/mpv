@@ -1,3 +1,6 @@
+-- forked from https://github.com/eatsu/mpv-osc-youtube-ui
+
+
 local assdraw = require 'mp.assdraw'
 local msg = require 'mp.msg'
 local opt = require 'mp.options'
@@ -26,8 +29,9 @@ local user_opts = {
     iamaprogrammer = false,     -- use native mpv values and disable OSC
                                 -- internal track list management (and some
                                 -- functions that depend on it)
-    seekrange = true,           -- show seekrange overlay
-    seekrangealpha = 192,       -- transparency of seekranges
+    seekbarfgcolor = 'FFFFFF',  -- seekbar foreground color, including seekbar handle and seek range
+    seekrange = false,           -- show seekrange overlay
+    seekrangealpha = 160,       -- transparency of seekranges
     seekbarkeyframes = true,    -- use keyframes when dragging the seekbar
     title = "${media-title}",   -- string compatible with property-expansion
     showtitle = true,           -- show title and no hide timeout on pause
@@ -42,14 +46,14 @@ local user_opts = {
     chapters_osd = true,        -- whether to show chapters OSD on seekbar
     playlist_osd = true,        -- whether to show playlist OSD on next/prev
     unicodeminus = false,       -- whether to use the Unicode minus sign character
-    language = "eng",           -- eng=English, chs=Chinese
+    language = "eng",           -- eng=English, per=Persian
     movesub = 'yes',            -- whether move up subtitle when osc appears
     blended_subtitles = 'yes',     -- if you have blend-subtitles in yout mpv.conf set to no change this.
                                 -- use with caution. it breaks setting sub pos runtime with r/t key
     subpos = 100,               -- with movesub enabled, initial subtitle position
                                 -- it overrides --sub-pos property in mpv.conf
     subpos_withosc = 92,        -- with movesub enabled, subtitle position when osc appears
-    thumbpad = 4,               -- thumbnail border size
+    thumbpad = 2,               -- thumbnail border size
 }
 
 -- read options from config and command-line
@@ -58,7 +62,7 @@ opt.read_options(user_opts, "osc", function(list) update_options(list) end)
 -- Localization
 local language = {
     ["eng"] = {
-        welcome = "{\\fs24\\1c&H0&\\3c&HFFFFFF&}Drop files or URLs to play here.",  -- this text appears when mpv starts
+        welcome = "{\\fs24\\1c&HFFFFFF&\\3c&H000000&}Drop files or URLs to play here.",  -- this text appears when mpv starts
         off = "Off",
         unknown = "unknown",
         none = "none",
@@ -72,21 +76,22 @@ local language = {
         chapter = "Chapter",
         chapters = "Chapters",
     },
-    ["chs"] = {
-        welcome = "{\\1c&H00\\bord0\\fs30\\fn微软雅黑 light\\fscx125}MPV{\\fscx100} 播放器",  -- this text appears when mpv starts
-        off = "关闭",
-        na = "n/a",
-        none = "无",
-        video = "视频",
-        audio = "音频",
-        subtitle = "字幕",
-        available = "可选",
-        track = "：",
-        playlist = "播放列表",
-        nolist = "无列表信息",
-        chapter = "章节",
-        nochapter = "无章节信息",
-    }
+
+    ["per"] = {
+        welcome = "{\\fs36\\1c&HFFFFFF&\\3c&000000&\\fn Vazir Medium}فایل ها یا لینک ها را اینجا رها کنید.",  -- this text appears when mpv starts
+        off = "خاموش",
+        unknown = "نامعلوم",
+        none = "هیچکدام",
+        video_track = "ویدئو",
+        video_tracks = "ویدئوها",
+        audio_track = "صدا",
+        audio_tracks = "صداها",
+        subtitle = "زیرنویس",
+        subtitles = "زیرنویس ها",
+        playlist = "لیست پخش",
+        chapter = "بخش",
+        chapters = "بخش ها",
+    },
 }
 
 -- apply lang opts
@@ -107,7 +112,7 @@ local osc_styles = {
     box = "{\\blur100\\bord98\\1c&H000000\\3c&H000000}",
     wc_box = "{\\blur32\\bord0\\1c&H000000\\3c&H000000}",
     seekbar_bg = "{\\blur0\\bord0\\1c&HFFFFFF}",
-    seekbar_fg = "{\\blur0\\bord0\\1c&HEFFFFFF}",
+    seekbar_fg = '{\\blur1\\bord1\\1c&H' .. user_opts.seekbarfgcolor .. '&}',
     volumebar_bg = "{\\blur0\\bord0\\1c&HFFFFFF}",
     volumebar_fg = "{\\blur0\\bord0\\1c&HFFFFFF}",
     button = "{\\blur0\\bord0\\1c&HFFFFFF\\3c&HFFFFFF}",
@@ -703,27 +708,25 @@ function render_elements(master_ass)
             local foH = elem_geo.h / 2
             local r = slider_lo.handle_size / 2
             local bar_r = slider_lo.bar_height / 2
-            local range_r = bar_r + 2
             local pad = slider_lo.pad
+            local seekRanges
 
-            if element.slider.seekRangesF ~= nil then
-                local seekRanges = element.slider.seekRangesF()
-            end
+              if element.slider.seekRangesF ~= nil then seekRanges = element.slider.seekRangesF() end
 
             if seekRanges then
+                elem_ass:draw_stop()
                 elem_ass:merge(element.style_ass)
-                elem_ass:append(slider_lo.bg_style)
                 ass_append_alpha(elem_ass, element.layout.alpha, user_opts.seekrangealpha)
                 elem_ass:merge(element.static_ass)
 
                 for _,range in pairs(seekRanges) do
-                    local pstart = get_slider_ele_pos_for(element, range["start"])
-                    local pend = get_slider_ele_pos_for(element, range["end"])
-                    ass_draw_rr_h_cw(elem_ass, pstart - range_r, foH - range_r,
-                                     pend + range_r, foH + range_r,
-                                     range_r, false)
+                    local pstart = get_slider_ele_pos_for(element, range['start'])
+                    local pend = get_slider_ele_pos_for(element, range['end'])
+                    elem_ass:rect_cw(pstart - foH, slider_lo.gap, pend + foH, elem_geo.h - slider_lo.gap)
                 end
             end
+
+            elem_ass:draw_stop()
 
             if pos then
                 local xp = get_slider_ele_pos_for(element, pos)
@@ -1354,7 +1357,8 @@ function layouts()
     lo = add_layout("tog_info")
     lo.geometry = {x = osc_geo.w - 78, y = btnY, an = 5, w = btnW, h = btnH}
     lo.style = osc_styles.button
-
+    
+    -- Title
     geo = { x = 494, y = refY - 15 , an = 1, w = osc_geo.w - 680, h = 20 }
     lo = add_layout('title')
     lo.geometry = geo
@@ -1888,31 +1892,22 @@ mp.register_event("video-reconfig", on_video_reconfig)
     ne.visible = (mp.get_property_number("duration", 0) > 0) and (osc_param.playresx >= 390)
     ne.content = function ()
         local possec = mp.get_property_number("playback-time", 0)
-        local ch = get_chapter(possec)
-        local chapter_title = ""
-        if ch and ch.title and ch.title ~= "" then
-            chapter_title = " • " .. ch.title
-        end
         if (state.rightTC_trem) then
             local minus = user_opts.unicodeminus and UNICODE_MINUS or "-"
             if state.tc_ms then
                 return (mp.get_property_osd("playback-time/full") .. " / "
-                    .. minus .. mp.get_property_osd("playtime-remaining/full")
-                    .. chapter_title)
+                    .. minus .. mp.get_property_osd("playtime-remaining/full"))
             else
                 return (mp.get_property_osd("playback-time") .. " / "
-                    .. minus .. mp.get_property_osd("playtime-remaining")
-                    .. chapter_title)
+                    .. minus .. mp.get_property_osd("playtime-remaining"))
             end
         else
             if state.tc_ms then
                 return (mp.get_property_osd("playback-time/full") .. " / "
-                    .. mp.get_property_osd("duration/full")
-                    .. chapter_title)
+                    .. mp.get_property_osd("duration/full"))
             else
                 return (mp.get_property_osd("playback-time") .. " / "
-                    .. mp.get_property_osd("duration")
-                    .. chapter_title)
+                    .. mp.get_property_osd("duration"))
             end
         end
     end
@@ -2428,7 +2423,7 @@ function tick()
             ass:new_event()
             ass:pos(display_w / 2, icon_y + 65)
             ass:an(8)
-            ass:append("Drop files or URLs to play here.")
+            ass:append(texts.welcome)
         end
         set_osd(display_w, display_h, ass.text)
 
