@@ -44,6 +44,7 @@ local user_opts = {
     unicodeminus = false,       -- whether to use the Unicode minus sign character
     language = "eng",           -- eng=English, chs=Chinese
     movesub = 'yes',            -- whether move up subtitle when osc appears
+    blended_subtitles = 'yes',     -- if you have blend-subtitles in yout mpv.conf set to no change this.
                                 -- use with caution. it breaks setting sub pos runtime with r/t key
     subpos = 100,               -- with movesub enabled, initial subtitle position
                                 -- it overrides --sub-pos property in mpv.conf
@@ -1409,7 +1410,7 @@ function checkAspectRatio()
     local height = videoParams["h"]
     local aspectRatio = width / height
     -- mp.msg.warn("aspect", aspectRatio)
-    if user_opts.movesub == 'yes' then
+    if user_opts.movesub == 'yes' and user_opts.blended_subtitles == 'yes' then
       if aspectRatio >= 1.85 then
         user_opts.movesub = 'no'
       end
