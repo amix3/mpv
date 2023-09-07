@@ -30,8 +30,8 @@ local user_opts = {
                                 -- internal track list management (and some
                                 -- functions that depend on it)
     seekbarfgcolor = 'FFFFFF',  -- seekbar foreground color, including seekbar handle and seek range
-    seekrange = false,          -- show seekrange overlay
-    seekrangealpha = 160,       -- transparency of seekranges
+    seekrange = false,           -- show seekrange overlay
+    seekrangealpha = 128,       -- transparency of seekranges
     seekbarkeyframes = true,    -- use keyframes when dragging the seekbar
     title = "${media-title}",   -- string compatible with property-expansion
     showtitle = true,           -- show title and no hide timeout on pause
@@ -43,7 +43,6 @@ local user_opts = {
     windowcontrols = "auto",    -- whether to show window controls
     windowcontrols_alignment = "right", -- which side to show window controls on
     livemarkers = true,         -- update seekbar chapter markers on duration change
-    chapters_osd = true,        -- whether to show chapters OSD on seekbar
     playlist_osd = true,        -- whether to show playlist OSD on next/prev
     unicodeminus = false,       -- whether to use the Unicode minus sign character
     language = "eng",           -- eng=English, per=Persian
@@ -1399,7 +1398,7 @@ local UNICODE_MINUS = string.char(0xe2, 0x88, 0x92)  -- UTF-8 for U+2212 MINUS S
 function osc_init()
     msg.debug("osc_init")
 
--- you shaud have blend subtitles enabled
+-- disabling movesub if the aspectratio is more than 1.85
 function checkAspectRatio()
     local videoParams = mp.get_property_native("video-params")
     -- in case of e.g. lavfi-complex there can be no input video, only output
@@ -1427,7 +1426,6 @@ end
 
 mp.register_event("file-loaded", onFileLoaded)
 
-mp.register_event("video-reconfig", on_video_reconfig)
     if user_opts.movesub == 'yes' then
         if state.osc_visible then
             mp.set_property_number('options/sub-pos', user_opts.subpos_withosc)
@@ -1835,9 +1833,6 @@ mp.register_event("video-reconfig", on_video_reconfig)
                         end
                     end
                     mp.commandv("set", "chapter", ch - 1)
-                    if user_opts.chapters_osd then
-                        show_message(get_chapterlist(), 3)
-                    end
                 end
             end
         end
@@ -1853,12 +1848,14 @@ mp.register_event("video-reconfig", on_video_reconfig)
     ne.visible = (osc_param.playresx >= 370)
 
     ne.enabled = (#tracks_osc.audio > 0)
+    ne.slider.tooltipF =
+        function ()
+            return "Volume"
+        end
     ne.slider.markerF = nil
     ne.slider.seekRangesF = nil
     ne.slider.posF =
         function () return mp.get_property_number("volume", 0) end
-    ne.slider.tooltipF =
-        function () return "Volume" end
     ne.eventresponder["mouse_move"] = --volume seeking when mouse is dragged
         function (element)
             local seekto = get_slider_value(element)
@@ -1895,7 +1892,7 @@ mp.register_event("video-reconfig", on_video_reconfig)
         if (state.rightTC_trem) then
             local minus = user_opts.unicodeminus and UNICODE_MINUS or "-"
             if state.tc_ms then
-                return (mp.get_property_osd("playback-time/full") .. " / "
+                return (mp.get_property_osd("playback-time/full") .. "/"
                     .. minus .. mp.get_property_osd("playtime-remaining/full"))
             else
                 return (mp.get_property_osd("playback-time") .. " / "
@@ -1903,7 +1900,7 @@ mp.register_event("video-reconfig", on_video_reconfig)
             end
         else
             if state.tc_ms then
-                return (mp.get_property_osd("playback-time/full") .. " / "
+                return (mp.get_property_osd("playback-time/full") .. "/"
                     .. mp.get_property_osd("duration/full"))
             else
                 return (mp.get_property_osd("playback-time") .. " / "
