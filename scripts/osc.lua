@@ -114,7 +114,7 @@ local osc_styles = {
     volumebar_bg = "{\\blur0\\bord0\\1c&HFFFFFF}",
     volumebar_fg = "{\\blur0\\bord0\\1c&HFFFFFF}",
     button = "{\\blur0\\bord0\\1c&HFFFFFF\\3c&HFFFFFF}",
-    timecode = "{\\blur0\\bord0\\1c&HFFFFFF\\3c&H000000\\fs18}",
+    timecode = "{\\blur0\\bord0\\1c&HFFFFFF\\3c&H000000\\fs16}",
     tooltip = "{\\blur1.5\\bord0.01\\1c&HFFFFFF\\3c&H000000\\fs18}",
     Title = '{\\blur0\\bord0\\1c&HFFFFFF\\3c&H000000\\fs18\\q2}',
     wctitle = "{\\1c&HFFFFFF\\fs24}",
@@ -1278,13 +1278,17 @@ function layouts()
     lo.alpha[3] = 0
 
     -- Seekbar
+    local seekbarMarginX = 192
+    if state.tc_ms then
+        seekbarMarginX = 242
+    end
     lo = add_layout("seekbar")
-    lo.geometry = {x = refX, y = refY - 52, an = 5, w = osc_geo.w - 32, h = 16}
+    lo.geometry = {x = refX, y = refY - 52, an = 5, w = osc_geo.w - seekbarMarginX, h = 16}
     lo.style = osc_styles.seekbar_fg
     lo.slider.gap = 7
     lo.slider.pad = 0
     lo.slider.handle_size = 12
-    lo.slider.bar_height = 4
+    lo.slider.bar_height = 2
     lo.slider.bg_style = osc_styles.seekbar_bg
     lo.slider.bg_alpha = 192
     lo.slider.tooltip_style = osc_styles.tooltip
@@ -1323,11 +1327,14 @@ function layouts()
     lo.geometry = {x = 198, y = btnY, an = 5, w = btnW, h = btnH}
     lo.style = osc_styles.button
 
-    -- Timecode
-    lo = add_layout("timecode")
-    lo.geometry = {x = 354, y = btnY, an = 4, w = tcW, h = btnH}
+      -- Timecode
+    lo = add_layout('tc_left')
+    lo.geometry = {x = 24, y = refY - 61, an = 7, w = 64, h = 20}
     lo.style = osc_styles.timecode
-    lo.button.maxchars = tcW / 6
+
+    lo = add_layout('tc_right')
+    lo.geometry = {x = osc_geo.w - 24, y = refY - 61, an = 9, w = 64, h = 20}
+    lo.style = osc_styles.timecode
 
     lo = add_layout("cy_audio")
     lo.geometry = {x = osc_geo.w - 118, y = btnY, an = 5, w = btnW, h = btnH}
@@ -1355,9 +1362,9 @@ function layouts()
     lo = add_layout("tog_info")
     lo.geometry = {x = osc_geo.w - 78, y = btnY, an = 5, w = btnW, h = btnH}
     lo.style = osc_styles.button
-    
+
     -- Title
-    geo = { x = 494, y = refY - 15 , an = 1, w = osc_geo.w - 680, h = 20 }
+    geo = { x = 354, y = refY - 15 , an = 1, w = osc_geo.w - 570, h = 20 }
     lo = add_layout('title')
     lo.geometry = geo
     lo.style = string.format('%s{\\clip(%f,%f,%f,%f)}', osc_styles.Title,
@@ -1575,7 +1582,7 @@ mp.register_event("file-loaded", onFileLoaded)
     ne = new_element("cy_audio", "button")
 
     ne.enabled = (#tracks_osc.audio > 1)
-    ne.visible = (osc_param.playresx >= 610)
+    ne.visible = (osc_param.playresx >= 478)
     ne.content = icons.cy_audio
     ne.tooltip_style = osc_styles.tooltip
     ne.tooltipF = function ()
@@ -1606,7 +1613,7 @@ mp.register_event("file-loaded", onFileLoaded)
     ne = new_element("cy_sub", "button")
 
     ne.enabled = (#tracks_osc.sub > 0)
-    ne.visible = (osc_param.playresx >= 652)
+    ne.visible = (osc_param.playresx >= 524)
     ne.content = icons.cy_sub
     ne.tooltip_style = osc_styles.tooltip
     ne.tooltipF = function ()
@@ -1678,7 +1685,7 @@ mp.register_event("file-loaded", onFileLoaded)
             return icons.fs_enter
         end
     end
-    ne.visible = (osc_param.playresx >= 520)
+    ne.visible = (osc_param.playresx >= 300)
     ne.tooltip_style = osc_styles.tooltip
     ne.tooltipF = function ()
         if (state.fullscreen) then
@@ -1693,7 +1700,7 @@ mp.register_event("file-loaded", onFileLoaded)
     --tog_info
     ne = new_element("tog_info", "button")
     ne.content = icons.info
-    ne.visible = (osc_param.playresx >= 570)
+    ne.visible = (osc_param.playresx >= 442)
     ne.tooltip_style = osc_styles.tooltip
     ne.tooltipF = "Information"
     ne.eventresponder["mbtn_left_up"] =
@@ -1703,7 +1710,7 @@ mp.register_event("file-loaded", onFileLoaded)
     ne = new_element('title', 'button')
     ne.content = function ()
         local title = mp.command_native({'expand-text', user_opts.title})
-        
+
         title = title:gsub('\\n', ' '):gsub('\\$', ''):gsub('{','\\{')
 
         return not (title == '') and title or ' '
@@ -1720,7 +1727,7 @@ mp.register_event("file-loaded", onFileLoaded)
 
     ne.eventresponder["mbtn_right_up"] =
         function () show_message(mp.get_property_osd("filename")) end
-    ne.visible = osc_param.playresx >= 820 and user_opts.showtitle
+    ne.visible = osc_param.playresx >= 630 and user_opts.showtitle
 
     --seekbar
     ne = new_element("seekbar", "slider")
@@ -1845,7 +1852,7 @@ mp.register_event("file-loaded", onFileLoaded)
 
     --volumebar
     ne = new_element("volumebar", "slider")
-    ne.visible = (osc_param.playresx >= 370)
+    ne.visible = (osc_param.playresx >= 390)
 
     ne.enabled = (#tracks_osc.audio > 0)
     ne.slider.tooltipF =
@@ -1883,36 +1890,40 @@ mp.register_event("file-loaded", onFileLoaded)
     ne.eventresponder["reset"] =
         function (element) element.state.lastseek = nil end
 
-    -- timecode (current pos + total/remaining time)
-    ne = new_element("timecode", "button")
 
-    ne.visible = (mp.get_property_number("duration", 0) > 0) and (osc_param.playresx >= 390)
+-- tc_left (current pos)
+    ne = new_element('tc_left', 'button')
     ne.content = function ()
-        local possec = mp.get_property_number("playback-time", 0)
-        if (state.rightTC_trem) then
-            local minus = user_opts.unicodeminus and UNICODE_MINUS or "-"
-            if state.tc_ms then
-                return (mp.get_property_osd("playback-time/full") .. "/"
-                    .. minus .. mp.get_property_osd("playtime-remaining/full"))
-            else
-                return (mp.get_property_osd("playback-time") .. " / "
-                    .. minus .. mp.get_property_osd("playtime-remaining"))
-            end
+        if (state.tc_ms) then
+            return (mp.get_property_osd('playback-time/full'))
         else
-            if state.tc_ms then
-                return (mp.get_property_osd("playback-time/full") .. "/"
-                    .. mp.get_property_osd("duration/full"))
-            else
-                return (mp.get_property_osd("playback-time") .. " / "
-                    .. mp.get_property_osd("duration"))
-            end
+            return (mp.get_property_osd('playback-time'))
         end
     end
-    ne.eventresponder["mbtn_left_up"] =
+    ne.eventresponder["mbtn_left_up"] = function ()
+        state.tc_ms = not state.tc_ms
+        request_init()
+    end
+    -- tc_right (total/remaining time)
+    ne = new_element('tc_right', 'button')
+    ne.content = function ()
+        if (mp.get_property_number('duration', 0) <= 0) then return '--:--:--' end
+        if (state.rightTC_trem) then
+            if (state.tc_ms) then
+                return ('-'..mp.get_property_osd('playtime-remaining/full'))
+            else
+                return ('-'..mp.get_property_osd('playtime-remaining'))
+            end
+        else
+            if (state.tc_ms) then
+                return (mp.get_property_osd('duration/full'))
+            else
+                return (mp.get_property_osd('duration'))
+        end
+        end
+    end
+    ne.eventresponder['mbtn_left_up'] =
         function () state.rightTC_trem = not state.rightTC_trem end
-    ne.eventresponder["mbtn_right_up"] =
-        function () state.tc_ms = not state.tc_ms end
-
 
     -- load layout
     layouts()
