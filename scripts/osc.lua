@@ -1278,9 +1278,9 @@ function layouts()
     lo.alpha[3] = 0
 
     -- Seekbar
-    local seekbarMarginX = 192
+    local seekbarMarginX = 182
     if state.tc_ms then
-        seekbarMarginX = 242
+        seekbarMarginX = 232
     end
     lo = add_layout("seekbar")
     lo.geometry = {x = refX, y = refY - 52, an = 5, w = osc_geo.w - seekbarMarginX, h = 16}
