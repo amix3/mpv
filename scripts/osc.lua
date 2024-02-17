@@ -60,7 +60,7 @@ opt.read_options(user_opts, "osc", function(list) update_options(list) end)
 -- Localization
 local language = {
     ["eng"] = {
-        welcome = "{\\fs24\\1c&HFFFFFF&\\3c&H000000&}Drop files or URLs to play here.",  -- this text appears when mpv starts
+        welcome = "{\\fs22\\1c&HFFFFFF&\\3c&H000000&}Drop files or URLs to play here.",  -- this text appears when mpv starts
         off = "Off",
         unknown = "unknown",
         none = "none",
@@ -2362,7 +2362,7 @@ end
 
 local logo_lines = {
     -- White border
-    "{\\c&HE5E5E5&\\p6}m 895 10 b 401 10 0 410 0 905 0 1399 401 1800 895 1800 1390 1800 1790 1399 1790 905 1790 410 1390 10 895 10 {\\p0}",
+    -- "{\\c&HE5E5E5&\\p6}m 895 10 b 401 10 0 410 0 905 0 1399 401 1800 895 1800 1390 1800 1790 1399 1790 905 1790 410 1390 10 895 10 {\\p0}",
     -- Purple fill
     "{\\c&H682167&\\p6}m 925 42 b 463 42 87 418 87 880 87 1343 463 1718 925 1718 1388 1718 1763 1343 1763 880 1763 418 1388 42 925 42{\\p0}",
     -- Darker fill
@@ -2427,7 +2427,7 @@ function tick()
 
         if user_opts.idlescreen then
             ass:new_event()
-            ass:pos(display_w / 2, icon_y + 65)
+            ass:pos(display_w / 2, icon_y + 70)
             ass:an(8)
             ass:append(texts.welcome)
         end
