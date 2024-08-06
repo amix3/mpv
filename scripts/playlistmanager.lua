@@ -280,7 +280,7 @@ if settings.showamount == -1 then
     end
   end
   
-  msg.info('auto showamount: ' .. settings.showamount)
+--  msg.info('auto showamount: ' .. settings.showamount)
 end
 
 --global variables

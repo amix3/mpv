@@ -116,16 +116,17 @@ end
 
 function detect_device()
     local gpu_context = mp.get_property_native("current-gpu-context")
+    
 --    	msg.info("GPU Context: " .. tostring(gpu_context))
 
     if not o.device or o.device == 'auto' then
         if os.getenv('windir') ~= nil then
             o.device = 'windows'
+	elseif gpu_context == "wayland" or gpu_context == "waylandvk" then
+            o.device = 'wayland'
         elseif (os.execute '[ -d "/Applications" ]' == 0 and os.execute '[ -d "/Library" ]' == 0) or 
                (os.execute '[ -d "/Applications" ]' == true and os.execute '[ -d "/Library" ]' == true) then
             o.device = 'mac'
-        elseif gpu_context == "wayland" or gpu_context == "waylandvk" then
-            o.device = 'wayland'
         else
             o.device = 'linux'
         end
@@ -133,8 +134,17 @@ function detect_device()
 --    	msg.info("Detected Device: " .. tostring(o.device))
 end
 
-mp.add_timeout(1, detect_device)
+function check_gpu_context()
+    local gpu_context = mp.get_property_native("current-gpu-context")
+    if gpu_context then
+        detect_device()
+    else
+--       msg.info("GPU Context not yet available, retrying...")
+        mp.add_timeout(0.5, check_gpu_context)
+    end
+end
 
+mp.add_timeout(0.25, check_gpu_context)
 
 
 function starts_protocol(tab, val)
