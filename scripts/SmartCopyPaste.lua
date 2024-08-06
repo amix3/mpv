@@ -138,13 +138,10 @@ function check_gpu_context()
     local gpu_context = mp.get_property_native("current-gpu-context")
     if gpu_context then
         detect_device()
-    else
---       msg.info("GPU Context not yet available, retrying...")
-        mp.add_timeout(0.5, check_gpu_context)
     end
 end
-
-mp.add_timeout(0.25, check_gpu_context)
+-- Observe changes to the "current-gpu-context" property
+mp.observe_property("current-gpu-context", "string", check_gpu_context)
 
 
 function starts_protocol(tab, val)
