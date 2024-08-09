@@ -190,7 +190,7 @@ local thumbfast = {
 }
 
 local window_control_box_width = 138
-local tick_delay = 0.03
+local tick_delay = 1 / 60
 
 --
 -- Helperfunctions
@@ -517,7 +517,7 @@ local elements = {}
 
 function prepare_elements()
 
-    -- remove elements without layout or invisble
+    -- remove elements without layout or invisible
     local elements2 = {}
     for n, element in pairs(elements) do
         if not (element.layout == nil) and (element.visible) then

@@ -350,7 +350,7 @@ helpText['request-display-duration'] = [[Sets the amount of time in seconds that
 receives a request-display signal. A value of 0 will keep the display on screen
 only as long as the key bound to it is held down.
 ]]
-settings['redraw-period'] = 0.03
+settings['redraw-period'] = 1 / 60
 helpText['redraw-period'] = [[Controls how often the display is redrawn, in seconds. This does not seem to
 significantly affect the smoothness of animations, and it is subject to the
 accuracy limits imposed by the scheduler mpv uses. Probably not worth changing
