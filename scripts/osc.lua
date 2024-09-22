@@ -60,7 +60,7 @@ opt.read_options(user_opts, "osc", function(list) update_options(list) end)
 -- Localization
 local language = {
     ["eng"] = {
-        welcome = "{\\fs22\\1c&HFFFFFF&\\3c&H000000&}Drop files or URLs to play here.",  -- this text appears when mpv starts
+        welcome = "{\\fs22\\1c&HFAFAFA&\\3c&H000000&}Drop files or URLs to play here.",  -- this text appears when mpv starts
         off = "Off",
         unknown = "unknown",
         none = "none",
@@ -76,7 +76,7 @@ local language = {
     },
 
     ["per"] = {
-        welcome = "{\\fs36\\1c&HFFFFFF&\\3c&000000&\\fn Vazir Medium}فایل ها یا لینک ها را اینجا رها کنید.",  -- this text appears when mpv starts
+        welcome = "{\\fs36\\1c&HFAFAFA&\\3c&000000&\\fn Vazir Medium}فایل ها یا لینک ها را اینجا رها کنید.",  -- this text appears when mpv starts
         off = "خاموش",
         unknown = "نامعلوم",
         none = "هیچکدام",
