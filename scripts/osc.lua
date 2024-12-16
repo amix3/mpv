@@ -42,6 +42,7 @@ local user_opts = {
     boxvideo = false,           -- apply osc_param.video_margins to video
     windowcontrols = "auto",    -- whether to show window controls
     windowcontrols_alignment = "right", -- which side to show window controls on
+    greenandgrumpy = false,     -- disable santa hat
     livemarkers = true,         -- update seekbar chapter markers on duration change
     playlist_osd = true,        -- whether to show playlist OSD on next/prev
     unicodeminus = false,       -- whether to use the Unicode minus sign character
@@ -76,7 +77,7 @@ local language = {
     },
 
     ["per"] = {
-        welcome = "{\\fs36\\1c&HFAFAFA&\\3c&000000&\\fn Vazir Medium}فایل ها یا لینک ها را اینجا رها کنید.",  -- this text appears when mpv starts
+        welcome = "{\\fs36\\1c&HFAFAFA&\\3c&000000&\\fn Vazir Medium}فایل یا لینک ها را اینجا رها کنید.",  -- this text appears when mpv starts
         off = "خاموش",
         unknown = "نامعلوم",
         none = "هیچکدام",
@@ -221,6 +222,8 @@ local margins_opts = {
     {"t", "video-margin-ratio-top"},
     {"b", "video-margin-ratio-bottom"},
 }
+
+local is_december = os.date("*t").month == 12
 
 -- scale factor for translating between real and virtual ASS coordinates
 function get_virt_scale_factor()
@@ -2372,6 +2375,7 @@ local logo_lines = {
     -- Triangle
     "{\\c&H691F69&\\p6}m 762 1113 l 762 708 b 881 776 1000 843 1119 911 1000 978 881 1046 762 1113{\\p0}",
 }
+
 
 local santa_hat_lines = {
     -- Pompoms
