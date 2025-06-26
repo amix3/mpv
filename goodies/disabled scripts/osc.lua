@@ -53,6 +53,9 @@ local user_opts = {
                                 -- it overrides --sub-pos property in mpv.conf
     subpos_withosc = 92,        -- with movesub enabled, subtitle position when osc appears
     thumbpad = 2,               -- thumbnail border size
+    menu_mbtn_left_command = "script-binding select/menu; script-message-to osc osc-hide",
+    menu_mbtn_mid_command = "",
+    menu_mbtn_right_command = "",
 }
 
 -- read options from config and command-line
@@ -161,6 +164,7 @@ local state = {
 }
 
 local icons = {
+    menu = "{\\p1}m 0 0 m 24 24 m 4 6 l 20 6 l 20 8 l 4 8 l 4 6 m 4 11 l 20 11 l 20 13 l 4 13 l 4 11 m 4 16 l 20 16 l 20 18 l 4 18 l 4 16{\\p0}",
     play = "{\\p1}m 0 0 m 24 24 m 8 5 l 8 19 l 19 12{\\p0}",
     pause = "{\\p1}m 0 0 m 24 24 m 6 19 l 10 19 l 10 5 l 6 5 l 6 19 m 14 5 l 14 19 l 18 19 l 18 5 l 14 5{\\p0}",
     close = "{\\p1}m 0 0 m 24 24 m 19 6.41 l 17.59 5 l 12 10.59 l 6.41 5 l 5 6.41 l 10.59 12 l 5 17.59 l 6.41 19 l 12 13.41 l 17.59 19 l 19 17.59 l 13.41 12{\\p0}",
@@ -1298,7 +1302,7 @@ function layouts()
 
     -- Volumebar
     lo = add_layout("volumebar")
-    lo.geometry = {x = 258, y = btnY, an = 4, w = 80, h = btnH}
+    lo.geometry = {x = 298, y = btnY, an = 4, w = 80, h = btnH}
     lo.style = osc_styles.volumebar_fg
     lo.slider.gap = 3
     lo.slider.pad = 0
@@ -1310,24 +1314,29 @@ function layouts()
     lo.slider.adjust_tooltip = false
 
     -- buttons
-    lo = add_layout("pl_prev")
+
+    lo = add_layout("menu")
     lo.geometry = {x = 38, y = btnY, an = 5, w = btnW, h = btnH}
     lo.style = osc_styles.button
 
-    lo = add_layout("skipback")
+    lo = add_layout("pl_prev")
     lo.geometry = {x = 78, y = btnY, an = 5, w = btnW, h = btnH}
     lo.style = osc_styles.button
 
-    lo = add_layout("playpause")
+    lo = add_layout("skipback")
     lo.geometry = {x = 118, y = btnY, an = 5, w = btnW, h = btnH}
     lo.style = osc_styles.button
 
-    lo = add_layout("skipfrwd")
+    lo = add_layout("playpause")
     lo.geometry = {x = 158, y = btnY, an = 5, w = btnW, h = btnH}
     lo.style = osc_styles.button
 
-    lo = add_layout("pl_next")
+    lo = add_layout("skipfrwd")
     lo.geometry = {x = 198, y = btnY, an = 5, w = btnW, h = btnH}
+    lo.style = osc_styles.button
+
+    lo = add_layout("pl_next")
+    lo.geometry = {x = 238, y = btnY, an = 5, w = btnW, h = btnH}
     lo.style = osc_styles.button
 
       -- Timecode
@@ -1355,7 +1364,7 @@ function layouts()
     lo.style = osc_styles.seekbar_fg
 
     lo = add_layout("volume")
-    lo.geometry = {x = 238, y = btnY, an = 5, w = btnW, h = btnH}
+    lo.geometry = {x = 278, y = btnY, an = 5, w = btnW, h = btnH}
     lo.style = osc_styles.button
 
     lo = add_layout("tog_fs")
@@ -1367,7 +1376,7 @@ function layouts()
     lo.style = osc_styles.button
 
     -- Title
-    geo = { x = 354, y = refY - 15 , an = 1, w = osc_geo.w - 570, h = 20 }
+    geo = { x = 394, y = refY - 15 , an = 1, w = osc_geo.w - 570, h = 20 }
     lo = add_layout('title')
     lo.geometry = geo
     lo.style = string.format('%s{\\clip(%f,%f,%f,%f)}', osc_styles.Title,
@@ -1403,6 +1412,30 @@ function update_options(list)
 end
 
 local UNICODE_MINUS = string.char(0xe2, 0x88, 0x92)  -- UTF-8 for U+2212 MINUS SIGN
+
+local function bind_mouse_buttons(element_name)
+    for _, button in pairs({"mbtn_left", "mbtn_mid", "mbtn_right"}) do
+        local command = user_opts[element_name .. "_" .. button .. "_command"]
+
+        if command ~= "" then
+            elements[element_name].eventresponder[button .. "_up"] = function ()
+                mp.command(command)
+            end
+        end
+    end
+
+    if user_opts.scrollcontrols then
+        for _, button in pairs({"wheel_down", "wheel_up"}) do
+            local command = user_opts[element_name .. "_" .. button .. "_command"]
+
+            if command and command ~= "" then
+                elements[element_name].eventresponder[button .. "_press"] = function ()
+                    mp.command(command)
+                end
+            end
+        end
+    end
+end
 
 -- OSC INIT
 function osc_init()
@@ -1483,6 +1516,15 @@ mp.register_event("file-loaded", onFileLoaded)
     local loop = mp.get_property("loop-playlist", "no")
 
     local ne
+
+
+    -- menu
+    ne = new_element("menu", "button")
+    ne.content = icons.menu
+    ne.tooltip_style = osc_styles.tooltip
+    ne.tooltipF = "Menu"
+    bind_mouse_buttons("menu")
+    
 
     -- playlist buttons
 
