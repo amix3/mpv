@@ -1600,7 +1600,7 @@ mp.register_event("file-loaded", onFileLoaded)
     ne = new_element("cy_audio", "button")
 
     ne.enabled = (#tracks_osc.audio > 1)
-    ne.visible = (osc_param.playresx >= 478)
+    ne.visible = (osc_param.playresx >= 518)
     ne.content = icons.cy_audio
     ne.tooltip_style = osc_styles.tooltip
     ne.tooltipF = function ()
@@ -1631,7 +1631,7 @@ mp.register_event("file-loaded", onFileLoaded)
     ne = new_element("cy_sub", "button")
 
     ne.enabled = (#tracks_osc.sub > 0)
-    ne.visible = (osc_param.playresx >= 524)
+    ne.visible = (osc_param.playresx >= 564)
     ne.content = icons.cy_sub
     ne.tooltip_style = osc_styles.tooltip
     ne.tooltipF = function ()
@@ -1703,7 +1703,7 @@ mp.register_event("file-loaded", onFileLoaded)
             return icons.fs_enter
         end
     end
-    ne.visible = (osc_param.playresx >= 300)
+    ne.visible = (osc_param.playresx >= 340)
     ne.tooltip_style = osc_styles.tooltip
     ne.tooltipF = function ()
         if (state.fullscreen) then
@@ -1718,7 +1718,7 @@ mp.register_event("file-loaded", onFileLoaded)
     --tog_info
     ne = new_element("tog_info", "button")
     ne.content = icons.info
-    ne.visible = (osc_param.playresx >= 442)
+    ne.visible = (osc_param.playresx >= 482)
     ne.tooltip_style = osc_styles.tooltip
     ne.tooltipF = "Information"
     ne.eventresponder["mbtn_left_up"] =
@@ -1745,7 +1745,7 @@ mp.register_event("file-loaded", onFileLoaded)
 
     ne.eventresponder["mbtn_right_up"] =
         function () show_message(mp.get_property_osd("filename")) end
-    ne.visible = osc_param.playresx >= 630 and user_opts.showtitle
+    ne.visible = osc_param.playresx >= 670 and user_opts.showtitle
 
     --seekbar
     ne = new_element("seekbar", "slider")
@@ -1870,7 +1870,7 @@ mp.register_event("file-loaded", onFileLoaded)
 
     --volumebar
     ne = new_element("volumebar", "slider")
-    ne.visible = (osc_param.playresx >= 390)
+    ne.visible = (osc_param.playresx >= 430)
 
     ne.enabled = (#tracks_osc.audio > 0)
     ne.slider.tooltipF =
