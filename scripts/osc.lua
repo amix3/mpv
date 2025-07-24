@@ -53,9 +53,6 @@ local user_opts = {
                                 -- it overrides --sub-pos property in mpv.conf
     subpos_withosc = 92,        -- with movesub enabled, subtitle position when osc appears
     thumbpad = 2,               -- thumbnail border size
-    menu_mbtn_left_command = "script-binding select/menu; script-message-to osc osc-hide",
-    menu_mbtn_mid_command = "",
-    menu_mbtn_right_command = "",
 }
 
 -- read options from config and command-line
@@ -1413,30 +1410,6 @@ end
 
 local UNICODE_MINUS = string.char(0xe2, 0x88, 0x92)  -- UTF-8 for U+2212 MINUS SIGN
 
-local function bind_mouse_buttons(element_name)
-    for _, button in pairs({"mbtn_left", "mbtn_mid", "mbtn_right"}) do
-        local command = user_opts[element_name .. "_" .. button .. "_command"]
-
-        if command ~= "" then
-            elements[element_name].eventresponder[button .. "_up"] = function ()
-                mp.command(command)
-            end
-        end
-    end
-
-    if user_opts.scrollcontrols then
-        for _, button in pairs({"wheel_down", "wheel_up"}) do
-            local command = user_opts[element_name .. "_" .. button .. "_command"]
-
-            if command and command ~= "" then
-                elements[element_name].eventresponder[button .. "_press"] = function ()
-                    mp.command(command)
-                end
-            end
-        end
-    end
-end
-
 -- OSC INIT
 function osc_init()
     msg.debug("osc_init")
@@ -1523,8 +1496,8 @@ mp.register_event("file-loaded", onFileLoaded)
     ne.content = icons.menu
     ne.tooltip_style = osc_styles.tooltip
     ne.tooltipF = "Menu"
-    bind_mouse_buttons("menu")
-    
+    ne.eventresponder["mbtn_left_up"] =
+    function () mp.commandv("script-binding", "select/menu") end
 
     -- playlist buttons
 
