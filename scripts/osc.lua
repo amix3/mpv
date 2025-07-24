@@ -1373,7 +1373,7 @@ function layouts()
     lo.style = osc_styles.button
 
     -- Title
-    geo = { x = 394, y = refY - 15 , an = 1, w = osc_geo.w - 570, h = 20 }
+    geo = { x = 394, y = refY - 15 , an = 1, w = osc_geo.w - 600, h = 20 }
     lo = add_layout('title')
     lo.geometry = geo
     lo.style = string.format('%s{\\clip(%f,%f,%f,%f)}', osc_styles.Title,
